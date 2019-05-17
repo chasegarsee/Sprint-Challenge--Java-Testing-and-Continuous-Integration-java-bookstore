@@ -1,77 +1,83 @@
 package com.lambdaschool.bookstore.model;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "book")
-public class Book
-{
-
+@Table(name="books")
+public class Book extends Auditable {
+    //bookid - long primary key
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long bookid;
-
-    private String booktitle;
-
-    private String ISBN;
+    //booktitle - String the title of the book
+    //ISBN - String the ISBN number of the book
+    @Column(nullable = false)
+    private String booktitle, ISBN;
+    //copy - Int the year the book was published (copyright date)
+    @Column(nullable = true)
+    private int copy;
 
     @ManyToMany(mappedBy = "books")
-    @JsonIgnore
-    private Set<Authors> authors = new HashSet<>();
+    @JsonIgnoreProperties("books")
+    private List<Author> authors = new ArrayList<>();
 
-    public Book()
-    {
+    public Book() {
     }
 
-    public Book(String booktitle, String ISBN, Set<Authors> authors)
-    {
+    public Book(String booktitle, String ISBN, int copy) {
         this.booktitle = booktitle;
         this.ISBN = ISBN;
+        this.copy = copy;
+    }
+
+    public Book(String booktitle, String ISBN, int copy, List<Author> authors) {
+        this.booktitle = booktitle;
+        this.ISBN = ISBN;
+        this.copy = copy;
         this.authors = authors;
     }
 
-    public long getBookid()
-    {
+    public long getBookid() {
         return bookid;
     }
 
-    public void setBoodid(long bookid)
-    {
+    public void setBookid(long bookid) {
         this.bookid = bookid;
     }
 
-    public String getBooktitle()
-    {
+    public String getBooktitle() {
         return booktitle;
     }
 
-    public void setBooktitle(String booktitle)
-    {
+    public void setBooktitle(String booktitle) {
         this.booktitle = booktitle;
     }
 
-    public String getISBN()
-    {
+    public String getISBN() {
         return ISBN;
     }
 
-    public void setISBN(String ISBN)
-    {
+    public void setISBN(String ISBN) {
         this.ISBN = ISBN;
     }
 
-    public Set<Authors> getAuthors()
-    {
+    public int getCopy() {
+        return copy;
+    }
+
+    public void setCopy(int copy) {
+        this.copy = copy;
+    }
+
+    public List<Author> getAuthors() {
         return authors;
     }
 
-    public void setAuthors(Set<Authors> authors)
-    {
+    public void setAuthors(List<Author> authors) {
         this.authors = authors;
     }
 }

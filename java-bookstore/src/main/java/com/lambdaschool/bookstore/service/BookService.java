@@ -3,16 +3,12 @@ package com.lambdaschool.bookstore.service;
 import com.lambdaschool.bookstore.model.Book;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 
-import java.util.List;
-
-public interface BookService
-{
-    List<Book> findAll(Pageable pageable);
-
-    void delete(long id);
-
-    Book save (Book book);
-
+public interface BookService {
+    ArrayList<Book> findAll(Pageable pageable);
+    Book findById(long id);
     Book update(Book book, long id);
+    Book addAuthor(long bookid, long authorid);
+    void delete(long id);
 }

@@ -1,63 +1,75 @@
 package com.lambdaschool.bookstore.service;
 
-
+import com.lambdaschool.bookstore.exception.ResourceNotFoundException;
+import com.lambdaschool.bookstore.model.Author;
 import com.lambdaschool.bookstore.model.Book;
+import com.lambdaschool.bookstore.repository.AuthorRepository;
 import com.lambdaschool.bookstore.repository.BookRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.ResourceAccessException;
 
-
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
-import java.util.List;
 
 @Service(value = "bookService")
-public class BookServiceImpl implements BookService
-{
+public class BookServiceImpl implements BookService {
 
-    @Autowired
-    private BookRepository bookrepos;
+    private BookRepository bookrepo;
+    private AuthorRepository authorrepo;
 
-    @Override
-    public List<Book> findAll(Pageable pageable)
-    {
-        List<Book> list = new ArrayList<>();
-        bookrepos.findAll(pageable).iterator().forEachRemaining(list::add);
-        return list;
+    public BookServiceImpl(BookRepository bookrepo, AuthorRepository authorrepo) {
+        this.bookrepo = bookrepo;
+        this.authorrepo = authorrepo;
     }
 
     @Override
-    public void delete(long id)
-    {
-        if (bookrepos.findById(id).isPresent())
-        {
-            bookrepos.deleteById(id);
-        } else
-        {
-            throw new EntityNotFoundException(Long.toString(id));
-        }
+    public ArrayList<Book> findAll(Pageable pageable) {
+        ArrayList<Book> books = new ArrayList<>();
+        bookrepo.findAll(pageable).iterator().forEachRemaining(books::add);
+        return books;
     }
 
     @Override
-    public Book save(Book book)
-    {
-        Book newBook = new Book();
-
-        newBook.setBooktitle(book.getBooktitle());
-
-        return bookrepos.save(newBook);
+    public Book findById(long id) {
+        return bookrepo.findById(id)
+                .orElseThrow(() -> new ResourceAccessException("Could not find book with id: " + id));
     }
 
+    @Transactional
     @Override
-    public Book update(Book book, long id)
-    {
-        Book currentBook = bookrepos.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(Long.toString(id)));
+    public Book update(Book book, long id) {
+        // Currently does not support updating authors
+        var current = bookrepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find a book with id \"" + id + "\" to update"));
         if (book.getBooktitle() != null)
-        {
-            currentBook.setBooktitle(book.getBooktitle());
-        }
-        return bookrepos.save(currentBook);
+            current.setBooktitle(book.getBooktitle());
+        if(book.getISBN() != null)
+            current.setISBN(book.getISBN());
+        if(book.getCopy() > 0)
+            current.setCopy(book.getCopy());
+
+        return bookrepo.save(current);
+    }
+
+    @Transactional
+    @Override
+    public Book addAuthor(long bookid, long authorid) {
+        Book b = bookrepo.findById(bookid)
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find book with id: " + bookid));
+        Author a = authorrepo.findById(authorid)
+                .orElseThrow(() -> new ResourceNotFoundException("Could not find book with id: " + bookid));
+        b.getAuthors().add(a);
+        a.getBooks().add(b);
+
+        bookrepo.save(b);
+        authorrepo.save(a);
+
+        return b;
+    }
+
+    @Override
+    public void delete(long id) {
+        bookrepo.delete(findById(id));
     }
 }
