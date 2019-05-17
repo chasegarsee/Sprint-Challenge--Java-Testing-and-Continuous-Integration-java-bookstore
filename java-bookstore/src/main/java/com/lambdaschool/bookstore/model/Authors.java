@@ -23,7 +23,7 @@ public class Authors
     private String lastname;
 
     @ManyToMany
-    @JoinTable(name = "authorsbooks",
+    @JoinTable(name = "wrote",
                joinColumns = {@JoinColumn(name = "authorid")},
                inverseJoinColumns = {@JoinColumn(name = "bookid")})
     @JsonIgnore

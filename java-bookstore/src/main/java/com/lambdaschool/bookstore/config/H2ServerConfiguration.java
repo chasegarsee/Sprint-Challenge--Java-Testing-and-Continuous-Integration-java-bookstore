@@ -14,11 +14,11 @@ import java.sql.SQLException;
 public class H2ServerConfiguration {
 
     // TCP port for remote connections, default 9092
-    @Value("${h2.tcp.port:9095}")
+    @Value("${h2.tcp.port:9096}")
     private String h2TcpPort;
 
     // Web port, default 8082
-    @Value("${h2.web.port:8085}")
+    @Value("${h2.web.port:8086}")
     private String h2WebPort;
 
     /**

@@ -35,14 +35,14 @@ public class Book
         this.authors = authors;
     }
 
-    public long getBoodid()
+    public long getBookid()
     {
         return bookid;
     }
 
-    public void setBoodid(long boodid)
+    public void setBoodid(long bookid)
     {
-        this.bookid = boodid;
+        this.bookid = bookid;
     }
 
     public String getBooktitle()
