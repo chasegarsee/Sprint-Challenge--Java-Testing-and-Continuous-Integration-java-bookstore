@@ -14,7 +14,7 @@ public class Book
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private long boodid;
+    private long bookid;
 
     private String booktitle;
 
@@ -37,12 +37,12 @@ public class Book
 
     public long getBoodid()
     {
-        return boodid;
+        return bookid;
     }
 
     public void setBoodid(long boodid)
     {
-        this.boodid = boodid;
+        this.bookid = boodid;
     }
 
     public String getBooktitle()
